@@ -44,6 +44,11 @@ func CreateImage(image Image) (Image, error) {
 	return image, result.Error
 }
 
+func CreateImages(images []Image) error {
+	err := DB.Create(&images).Error
+	return err
+}
+
 func DeleteImageById(id int64) error {
 	var image Image
 	result := DB.Delete(&image, id)
@@ -54,4 +59,10 @@ func DeleteImagesByRecordId(tableName string, recordID int64) error {
 	var images []Image
 	result := DB.Where("table_name = ? AND record_id = ?", tableName, recordID).Delete(&images)
 	return result.Error
+}
+
+func CountImagesByTableNameAndRecordId(tableName string, recordID int64) (int64, error) {
+	var count int64
+	result := DB.Model(&Image{}).Where("table_name = ? AND record_id = ?", tableName, recordID).Count(&count)
+	return count, result.Error
 }

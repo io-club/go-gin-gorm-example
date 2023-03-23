@@ -3,40 +3,52 @@ package api
 import (
 	"fibric/model"
 	"fibric/util"
+	"mime/multipart"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
+type CreateFabricRequest struct {
+	Name     string                  `form:"name" json:"name" binding:"required"`
+	Detail   string                  `form:"detail" json:"detail" binding:"required"`
+	Category string                  `form:"category" json:"category" binding:"required"`
+	Images   []*multipart.FileHeader `form:"images" json:"image"`
+}
+
 func CreateFabric(c *gin.Context) {
 	// 获取请求中的参数
-	name := c.PostForm("name")
-	details := c.PostForm("detail")
-
-	// 获取上传的图片
-	file, err := c.FormFile("image")
-	if err != nil {
+	var req CreateFabricRequest
+	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	if len(req.Images) > 5 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "最多上传 5 张图片"})
+		return
+	}
+
 	// 将面料信息保存到数据库中
-	fabric := model.Fabric{Name: name, Detail: details}
+	fabric := model.Fabric{Name: req.Name, Detail: req.Detail}
 	if err := model.DB.Create(&fabric).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	images := make([]model.Image, len(req.Images))
 	// 将上传的图片保存到本地
-	filename := util.CreateFileName(file)
-	if err := c.SaveUploadedFile(file, "images/"+filename); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+	for _, file := range req.Images {
+		filename := util.CreateFileName(file)
+		if err := c.SaveUploadedFile(file, "images/"+filename); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		images = append(images, model.Image{TableName: model.Fabric{}.TableName(), RecordID: fabric.ID, FileName: filename})
 	}
 
 	// 将图片信息保存到数据库中
-	image := model.Image{TableName: model.Fabric{}.TableName(), RecordID: fabric.ID, FileName: filename}
-	if err := model.DB.Create(&image).Error; err != nil {
+	if err := model.CreateImages(images); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -54,18 +66,47 @@ func GetFabric(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, fabric)
+	var images []model.Image
+	if err := model.DB.Where("table_name = ? AND record_id = ?", fabric.TableName(), fabric.ID).Find(&images).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get images"})
+		return
+	}
+
+	var ret GetFabricsResponse
+	ret.Fabric = fabric
+
+	simpleImages := make([]SimpleImageResponse, len(images))
+	for i, image := range images {
+		simpleImages[i] = SimpleImageResponse{ID: int64(image.ID), Name: image.FileName}
+	}
+	ret.Images = simpleImages
+
+	c.JSON(http.StatusOK, ret)
 }
 
+type GetFabricsRequest struct {
+	model.Pageable
+	Category string `form:"category"`
+}
 type GetFabricsResponse struct {
 	model.Fabric
-	Images []model.Image `json:"images"`
+	Images []SimpleImageResponse `json:"images"`
 }
 
 func GetFabrics(c *gin.Context) {
+	var req GetFabricsRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	var fabrics []model.Fabric
 
-	if err := model.DB.Find(&fabrics).Error; err != nil {
+	conn := model.DB
+	if req.Category != "" {
+		conn = model.DB.Where("category = ?", req.Category)
+	}
+	if err := conn.Limit(req.Size).Offset(req.Page).Order("id desc").Find(&fabrics).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get fabrics"})
 		return
 	}
@@ -80,7 +121,11 @@ func GetFabrics(c *gin.Context) {
 	var ret []GetFabricsResponse
 	// 将图片信息添加到面料信息中
 	for _, fabric := range fabrics {
-		ret = append(ret, GetFabricsResponse{fabric, imagesMap[int64(fabric.ID)]})
+		images := make([]SimpleImageResponse, 0)
+		for _, image := range imagesMap[int64(fabric.ID)] {
+			images = append(images, SimpleImageResponse{int64(image.ID), image.FileName})
+		}
+		ret = append(ret, GetFabricsResponse{fabric, images})
 	}
 
 	c.JSON(http.StatusOK, ret)
@@ -88,7 +133,7 @@ func GetFabrics(c *gin.Context) {
 
 type UpdateFabricRequest struct {
 	model.Fabric
-	ImageURL string `json:"image_url"`
+	// ImageURL string `json:"image_url"`
 }
 
 func UpdateFabric(c *gin.Context) {
@@ -110,21 +155,9 @@ func UpdateFabric(c *gin.Context) {
 		newDetail = detail
 	}
 
-	// 获取上传的图片
-	newFilename := fabric.ImageURL
-	file, err := c.FormFile("image")
-	if err == nil {
-		// 将上传的图片保存到本地
-		filename := util.CreateFileName(file)
-		if err := c.SaveUploadedFile(file, "images/"+filename); err == nil {
-			newFilename = filename
-		}
-	}
-
 	// 将面料信息保存到数据库中
 	fabric.Name = newName
 	fabric.Detail = newDetail
-	fabric.ImageURL = newFilename
 	if err := model.DB.Save(&fabric).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update fabric"})
 		return
