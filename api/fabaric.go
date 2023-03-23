@@ -144,7 +144,7 @@ func GetFabrics(c *gin.Context) {
 
 type UpdateFabricRequest struct {
 	model.Fabric
-	// ImageURL string `json:"image_url"`
+	ImageURL string `json:"image_url"`
 }
 
 func UpdateFabric(c *gin.Context) {
