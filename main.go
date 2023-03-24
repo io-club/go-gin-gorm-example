@@ -30,12 +30,9 @@ func main() {
 	}
 	image := base.Group("/image")
 	{
-		// TODO: curl add
 		image.POST("/upload", api.UploadImage)
-		// TODO: curl add
 		image.DELETE("/:id", api.DeleteImageById)
-		// TODO: curl add
-		image.DELETE("/", api.DeleteImagesByRecordId)
+		// image.DELETE("/", api.DeleteImagesByRecordId)
 	}
 	fabric := base.Group("/fabric")
 	{

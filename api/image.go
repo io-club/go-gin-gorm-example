@@ -42,7 +42,7 @@ func DeleteImagesByRecordId(c *gin.Context) {
 type UploadImageRequest struct {
 	TableName string                  `form:"tableName" json:"tableName" binding:"required"`
 	RecordId  int64                   `form:"recordId" json:"recordId" binding:"required"`
-	Images    []*multipart.FileHeader `form:"images" json:"image"`
+	Images    []*multipart.FileHeader `form:"images" json:"images"`
 }
 
 func UploadImage(c *gin.Context) {
@@ -60,11 +60,6 @@ func UploadImage(c *gin.Context) {
 		return
 	}
 	if int(count)+len(req.Images) > 5 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "最多上传 5 张图片"})
-		return
-	}
-
-	if len(req.Images) > 5 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "最多上传 5 张图片"})
 		return
 	}
