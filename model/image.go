@@ -45,6 +45,9 @@ func CreateImage(image Image) (Image, error) {
 }
 
 func CreateImages(images []Image) error {
+	if len(images) == 0 {
+		return nil
+	}
 	err := DB.Create(&images).Error
 	return err
 }

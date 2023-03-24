@@ -31,21 +31,18 @@ func main() {
 	image := base.Group("/image")
 	{
 		// TODO: curl add
+		image.POST("/upload", api.UploadImage)
+		// TODO: curl add
 		image.DELETE("/:id", api.DeleteImageById)
 		// TODO: curl add
 		image.DELETE("/", api.DeleteImagesByRecordId)
 	}
 	fabric := base.Group("/fabric")
 	{
-		// TODO: curl modify
-		fabric.POST("/", api.CreateFabric)
-		// TODO: curl modify
+		fabric.POST("", api.CreateFabric)
 		fabric.GET("/:id", api.GetFabric)
-		// TODO: curl modify
 		fabric.PUT("/:id", api.UpdateFabric)
-		// TODO: curl modify
 		fabric.DELETE("/:id", api.DeleteFabric)
-		// TODO: curl modify
 		fabric.GET("/list", api.GetFabrics)
 	}
 

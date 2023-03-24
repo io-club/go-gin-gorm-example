@@ -8,7 +8,7 @@ type Fabric struct {
 	Name     string `gorm:"not null"`
 	Category string `gorm:"not null"`
 	Detail   string `gorm:"not null"`
-	// ImageURL string `gorm:"not null"`
+	ImageURL string `gorm:"not null"`
 }
 
 func (fabric Fabric) TableName() string {

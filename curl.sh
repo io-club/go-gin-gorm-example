@@ -24,7 +24,11 @@ case $1 in
   }'
   ;;
 2000) # get fabrics list
-  curl -X GET "$base_url/fabric/list?page=2&size=1"
+  # query:
+  #     - page: int required, 例如: 1, 2, 3, ...
+  #     - size: int required, 例如: 10, 20, 30, ...
+  #     - category: string optional, 例如: defult, new, hot, ...
+  curl -X GET "$base_url/fabric/list?page=1&size=10&category=default"
   ;;
 2001) # get fabric
   curl -X GET $base_url/fabric/"$2"
@@ -33,13 +37,14 @@ case $1 in
   curl -X POST $base_url/fabric \
     -F "name=aaa" \
     -F "detail=bbb" \
-    -F "image=@/home/trdthg/b.jpg"
+    -F "category=default" \
+    -F "image=@/home/trdthg/resources/a.jpg"
   ;;
 2003) # put fabric
   curl -X PUT $base_url/fabric/"$2" \
     -F "name=aaa" \
     -F "detail=bbb2" \
-    -F "image=@/home/trdthg/b.jpg"
+    -F "image=@/home/trdthg/resources/a.jpg"
   ;;
 2004) # delete fabric
   curl -X DELETE $base_url/fabric/"$2"
