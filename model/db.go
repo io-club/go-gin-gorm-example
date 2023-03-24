@@ -31,6 +31,7 @@ func ConnectDB() (*gorm.DB, error) {
 	// Create tables
 	db.AutoMigrate(&Fabric{})
 	db.AutoMigrate(&User{})
+	db.AutoMigrate(&Image{})
 
 	return db, nil
 }

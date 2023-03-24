@@ -86,7 +86,7 @@ func GetFabric(c *gin.Context) {
 
 type GetFabricsRequest struct {
 	model.Pageable
-	Category string `form:"category"`
+	Category string `form:"category" json:"category"`
 }
 type GetFabricsResponse struct {
 	model.Fabric
@@ -95,7 +95,7 @@ type GetFabricsResponse struct {
 
 func GetFabrics(c *gin.Context) {
 	var req GetFabricsRequest
-	if err := c.ShouldBindQuery(&req); err != nil {
+	if err := c.BindQuery(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -106,7 +106,7 @@ func GetFabrics(c *gin.Context) {
 	if req.Category != "" {
 		conn = model.DB.Where("category = ?", req.Category)
 	}
-	if err := conn.Limit(req.Size).Offset(req.Page).Order("id desc").Find(&fabrics).Error; err != nil {
+	if err := conn.Limit(*req.Size).Offset((*req.Page - 1) * *req.Size).Order("id desc").Find(&fabrics).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get fabrics"})
 		return
 	}
