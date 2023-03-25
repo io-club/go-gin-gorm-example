@@ -42,6 +42,10 @@ func main() {
 		fabric.DELETE("/:id", api.DeleteFabric)
 		fabric.GET("/list", api.GetFabrics)
 	}
+	brand :=base.Group("/brand")
+	{
+		brand.DELETE("/:id",api.DeleteBrandById)
+	}
 
 	// 启动 HTTP 服务器
 	r.Run(":8080")

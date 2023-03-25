@@ -1,8 +1,6 @@
 package model
 
-import (
-	"gorm.io/gorm"
-)
+import "gorm.io/gorm"
 
 // Image 结构体表示图片信息
 type Image struct {

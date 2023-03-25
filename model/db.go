@@ -10,9 +10,7 @@ import (
 var DB *gorm.DB
 
 func init() {
-	fmt.Println("aaa1")
 	db, err := ConnectDB()
-	fmt.Println("aaa")
 	if err != nil {
 		panic(err)
 	}
@@ -32,6 +30,7 @@ func ConnectDB() (*gorm.DB, error) {
 	db.AutoMigrate(&Fabric{})
 	db.AutoMigrate(&User{})
 	db.AutoMigrate(&Image{})
+	db.AutoMigrate(&Brand{})
 
 	return db, nil
 }
