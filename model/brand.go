@@ -2,7 +2,7 @@ package model
 
 import "gorm.io/gorm"
 
-// Fabric 结构体表示服装面料信息
+// Brand 结构体表示品牌信息
 type Brand struct {
 	gorm.Model
 	Name     string `gorm:"not null"`
