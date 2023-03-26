@@ -42,11 +42,17 @@ func main() {
 		fabric.DELETE("/:id", api.DeleteFabric)
 		fabric.GET("/list", api.GetFabrics)
 	}
-	brand :=base.Group("/brand")
+	brand := base.Group("/brand")
 	{
-		brand.DELETE("/:id",api.DeleteBrandById)
-		brand.GET("/:id",api.GetBrandById)
-		brand.POST("",api.CreateBrand)
+		brand.DELETE("/:id", api.DeleteBrandById)
+		brand.GET("/:id", api.GetBrandById)
+		brand.POST("", api.CreateBrand)
+	}
+	trend := base.Group("/trend")
+	{
+		trend.DELETE("/:id", api.DeleteTrendById)
+		trend.GET("/:id", api.GetTrendById)
+		trend.POST("", api.CreateTrend)
 	}
 	// 启动 HTTP 服务器
 	r.Run(":8080")
