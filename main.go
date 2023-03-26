@@ -45,8 +45,9 @@ func main() {
 	brand :=base.Group("/brand")
 	{
 		brand.DELETE("/:id",api.DeleteBrandById)
+		brand.GET("/:id",api.GetBrandById)
+		brand.POST("",api.CreateBrand)
 	}
-
 	// 启动 HTTP 服务器
 	r.Run(":8080")
 }

@@ -26,6 +26,7 @@ func CreateFabric(c *gin.Context) {
 		return
 	}
 
+	// 图片不能超过 5 个
 	if len(req.Images) > 5 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "最多上传 5 张图片"})
 		return
