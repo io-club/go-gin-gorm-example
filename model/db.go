@@ -4,33 +4,35 @@ import (
 	"fmt"
 
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
 func init() {
-	db, err := ConnectDB()
+	var db *gorm.DB
+	var err error
+	switch MODE {
+	case "debug":
+		// connect to sqlite
+		db, err = gorm.Open(sqlite.Open("./cache/test.db"), &gorm.Config{})
+	case "release":
+		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local", DBUser, DBPassword, DBHost, DBPort, DBName, DBCharset)
+		// set timeout
+		dsn += "&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true"
+		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	default:
+		panic("mode not correct")
+	}
 	if err != nil {
-		panic(err)
+		panic("failed to connect database")
 	}
 	DB = db
-}
-
-func ConnectDB() (*gorm.DB, error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local", DBUser, DBPassword, DBHost, DBPort, DBName, DBCharset)
-	// set timeout
-	dsn += "&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
 
 	// Create tables
-	db.AutoMigrate(&Fabric{})
-	db.AutoMigrate(&User{})
-	db.AutoMigrate(&Image{})
-	db.AutoMigrate(&Brand{})
-
-	return db, nil
+	DB.AutoMigrate(&Fabric{})
+	DB.AutoMigrate(&User{})
+	DB.AutoMigrate(&Image{})
+	DB.AutoMigrate(&Brand{})
 }

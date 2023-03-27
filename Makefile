@@ -1,4 +1,7 @@
+include .env
 
+test:
+	echo ${DB_NAME}
 build:
 	go build -ldflags "-linkmode=external -extldflags '-static'" .
 run:

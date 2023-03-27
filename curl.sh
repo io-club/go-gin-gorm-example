@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+export "$(grep -v '^#' .env | xargs)"
+echo "Hello, ${DB_NAME}"
+
 dev=0
 if [ $dev -eq 1 ]; then
   base_url="http://localhost:8080/api"
