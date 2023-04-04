@@ -67,13 +67,12 @@ case $1 in
   # query:
   #     - page: int required, 例如: 1, 2, 3, ...
   #     - size: int required, 例如: 10, 20, 30, ...
-  #     - category: string optional, 例如: defult, new, hot, ...
-  curl -X GET "$base_url/brand/list?page=1&size=10&category=default"
+  curl -X GET "$base_url/brand/list?page=1&size=10"
   ;;
 4001) # get brand
   curl -X GET $base_url/brand/"$2"
   ;;
-4002) # post brand
+4002) # create brand
   curl -X POST $base_url/brand \
     -F "name=aaa" \
     -F "detail=bbb" \

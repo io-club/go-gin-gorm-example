@@ -48,6 +48,7 @@ func main() {
 		brand.GET("/:id", api.GetBrandById)
 		brand.POST("", api.CreateBrand)
 		brand.PUT("/:id", api.UpdateBrand)
+		brand.GET("/list", api.GetBrands)
 	}
 	trend := base.Group("/trend")
 	{
