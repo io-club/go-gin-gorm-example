@@ -106,7 +106,7 @@ type GetFabricsResponse struct {
 func GetFabrics(c *gin.Context) {
 	var req GetFabricsRequest
 	if err := c.BindQuery(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数解析失败"})
 		return
 	}
 
@@ -170,7 +170,7 @@ func UpdateFabric(c *gin.Context) {
 		old.Category = *req.Category
 	}
 	if req.Detail != nil {
-		old.Name = *req.Detail
+		old.Detail = *req.Detail
 	}
 	if req.PreviewImage != nil {
 		filename := util.CreateFileName(req.PreviewImage)
@@ -179,7 +179,7 @@ func UpdateFabric(c *gin.Context) {
 			return
 		}
 
-		old.Name = filename
+		old.ImageURL = filename
 	}
 
 	if err := model.DB.Save(&old).Error; err != nil {
@@ -187,7 +187,7 @@ func UpdateFabric(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, req)
+	c.JSON(http.StatusOK, old)
 }
 
 func DeleteFabric(c *gin.Context) {

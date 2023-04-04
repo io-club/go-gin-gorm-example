@@ -3,7 +3,6 @@ package api
 import (
 	"fibric/model"
 	"fibric/util"
-	"fmt"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -32,6 +31,7 @@ func DeleteBrandById(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{"success": "delete success"})
 }
+
 func GetBrandById(c *gin.Context) {
 	id := c.Param("id")
 	var brand model.Brand
@@ -119,7 +119,7 @@ func UpdateBrand(c *gin.Context) {
 		old.Name = *req.Name
 	}
 	if req.Detail != nil {
-		old.Name = *req.Detail
+		old.Detail = *req.Detail
 	}
 	if req.PreviewImage != nil {
 		filename := util.CreateFileName(req.PreviewImage)
@@ -128,7 +128,7 @@ func UpdateBrand(c *gin.Context) {
 			return
 		}
 
-		old.Name = filename
+		old.ImageURL = filename
 	}
 
 	if err := model.DB.Save(&old).Error; err != nil {
@@ -136,12 +136,11 @@ func UpdateBrand(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, req)
+	c.JSON(http.StatusOK, old)
 }
 
 type GetBrandsRequest struct {
 	model.Pageable
-	Category string `form:"category" json:"category"`
 }
 type GetBrandsResponse struct {
 	model.Brand
@@ -158,10 +157,6 @@ func GetBrands(c *gin.Context) {
 	var brands []model.Brand
 
 	conn := model.DB
-	fmt.Printf("category: [%s]\n", req.Category)
-	if req.Category != "" {
-		conn = conn.Where("category = ?", req.Category)
-	}
 	if err := conn.Limit(*req.Size).Offset((*req.Page - 1) * *req.Size).Order("id desc").Find(&brands).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get brands"})
 		return
