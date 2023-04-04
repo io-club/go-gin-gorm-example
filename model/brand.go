@@ -31,3 +31,7 @@ func DeleteBrandById(brandId int64) error {
 	result := DB.Delete(&brand, brandId)
 	return result.Error
 }
+func UpdateBrand(brand Brand) (Brand, error) {
+	result := DB.Updates(&brand)
+	return brand, result.Error
+}
