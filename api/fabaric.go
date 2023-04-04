@@ -143,43 +143,51 @@ func GetFabrics(c *gin.Context) {
 }
 
 type UpdateFabricRequest struct {
-	model.Fabric
-	ImageURL string `json:"image_url"`
+	Name         *string               `form:"name" json:"name" `
+	Category     *string               `form:"category" json:"category" `
+	Detail       *string               `form:"detail" json:"detail" `
+	PreviewImage *multipart.FileHeader `form:"image" json:"image"`
 }
 
 func UpdateFabric(c *gin.Context) {
 	id := c.Param("id")
-	var fabric UpdateFabricRequest
-
-	if err := model.DB.First(&fabric, id).Error; err != nil {
+	var req UpdateFabricRequest
+	var old model.Fabric
+	if err := model.DB.First(&old, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "fabric not found"})
 		return
 	}
 
-	// 获取请求中的参数
-	newName := fabric.Name
-	if name := c.PostForm("name"); name != "" {
-		newName = name
-	}
-	newDetail := fabric.Detail
-	if detail := c.PostForm("detail"); detail != "" {
-		newDetail = detail
-	}
-	newImageURL := fabric.ImageURL
-	if imageURL := c.PostForm("image_url"); imageURL != "" {
-		newImageURL = imageURL
+	err := c.ShouldBind(&req)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "参数解析失败"})
 	}
 
-	// 将面料信息保存到数据库中
-	fabric.Name = newName
-	fabric.Detail = newDetail
-	fabric.ImageURL = newImageURL
-	if err := model.DB.Save(&fabric).Error; err != nil {
+	if req.Name != nil {
+		old.Name = *req.Name
+	}
+	if req.Category != nil {
+		old.Category = *req.Category
+	}
+	if req.Detail != nil {
+		old.Name = *req.Detail
+	}
+	if req.PreviewImage != nil {
+		filename := util.CreateFileName(req.PreviewImage)
+		if err := c.SaveUploadedFile(req.PreviewImage, "images/"+filename); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		old.Name = filename
+	}
+
+	if err := model.DB.Save(&old).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update fabric"})
 		return
 	}
 
-	c.JSON(http.StatusOK, fabric)
+	c.JSON(http.StatusOK, req)
 }
 
 func DeleteFabric(c *gin.Context) {

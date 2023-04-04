@@ -47,6 +47,7 @@ func main() {
 		brand.DELETE("/:id", api.DeleteBrandById)
 		brand.GET("/:id", api.GetBrandById)
 		brand.POST("", api.CreateBrand)
+		brand.PUT("/:id", api.UpdateBrand)
 	}
 	trend := base.Group("/trend")
 	{
