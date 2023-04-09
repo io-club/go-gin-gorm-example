@@ -35,4 +35,8 @@ func init() {
 	DB.AutoMigrate(&User{})
 	DB.AutoMigrate(&Image{})
 	DB.AutoMigrate(&Brand{})
+	DB.AutoMigrate(&Trend{})
+	DB.AutoMigrate(&Cloth{})
+	DB.AutoMigrate(&Dress{})
+	DB.AutoMigrate(&News{})
 }
