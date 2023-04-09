@@ -129,7 +129,7 @@ func GetFabrics(c *gin.Context) {
 		return
 	}
 
-	ret := make([]GetFabricsResponse, 0)
+	ret := []GetFabricsResponse{}
 	// 将图片信息添加到面料信息中
 	for _, fabric := range fabrics {
 		images := make([]SimpleImageResponse, 0)
