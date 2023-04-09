@@ -154,7 +154,7 @@ func GetBrands(c *gin.Context) {
 		return
 	}
 
-	var brands []model.Brand
+	brands := []model.Brand{}
 
 	conn := model.DB
 	if err := conn.Limit(*req.Size).Offset((*req.Page - 1) * *req.Size).Order("id desc").Find(&brands).Error; err != nil {
@@ -169,7 +169,7 @@ func GetBrands(c *gin.Context) {
 		return
 	}
 
-	var ret []GetBrandsResponse
+	ret := []GetBrandsResponse{}
 	// 将图片信息添加到面料信息中
 	for _, brand := range brands {
 		images := make([]SimpleImageResponse, 0)

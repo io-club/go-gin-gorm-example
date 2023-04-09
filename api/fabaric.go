@@ -110,7 +110,7 @@ func GetFabrics(c *gin.Context) {
 		return
 	}
 
-	var fabrics []model.Fabric
+	fabrics := []model.Fabric{}
 
 	conn := model.DB
 	fmt.Printf("category: [%s]\n", req.Category)
@@ -129,7 +129,7 @@ func GetFabrics(c *gin.Context) {
 		return
 	}
 
-	var ret []GetFabricsResponse
+	ret := make([]GetFabricsResponse, 0)
 	// 将图片信息添加到面料信息中
 	for _, fabric := range fabrics {
 		images := make([]SimpleImageResponse, 0)

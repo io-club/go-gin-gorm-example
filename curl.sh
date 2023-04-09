@@ -41,11 +41,11 @@ case $1 in
     -F "name=aaa" \
     -F "detail=bbb" \
     -F "category=default" \
-    -F "image=@C:\Users\TZX00\Pictures\bh.PNG"
+    -F "image=@${2}"
   ;;
 2003) # update fabric
   curl -X PUT $base_url/fabric/"$2" \
-    -F "name=aaa1" 
+    -F "name=aaa1"
     # -F "detail=bbb2" \
     # -F "image=@"
   ;;
@@ -53,12 +53,19 @@ case $1 in
   curl -X DELETE $base_url/fabric/"$2"
   ;;
 3001) # upload images
+  # 上传图片
+  # tableName: string required, 例如: fabrics, brands, ...
+  #     用于指定图片属于哪个表
+  # recordId: string required, 例如: 1，2, ...
+  # images: file required, 例如: a.jpg, b.jpg, ...
+  #     图片可以传多个，但是数据库最多只能传 5 张
+
   curl -X POST $base_url/image/upload \
-    -F "tableName=fabrics" \
-    -F "recordId=3" \
-    -F "images=@/home/trdthg/resources/a.jpg" \
-    -F "images=@/home/trdthg/resources/a.jpg" \
-    -F "images=@/home/trdthg/resources/a.jpg"
+    -F "tableName=$2" \
+    -F "recordId=$3" \
+    -F "images=@$4"
+    # -F "images=@/home/trdthg/resources/a.jpg" \
+    # -F "images=@/home/trdthg/resources/a.jpg" \
   ;;
 3002) # delete image
   curl -X DELETE $base_url/image/"$2"
@@ -76,7 +83,7 @@ case $1 in
   curl -X POST $base_url/brand \
     -F "name=aaa" \
     -F "detail=bbb" \
-    -F "image=@C:\Users\TZX00\Pictures\bh.PNG"
+    -F "image=@${2}"
   ;; 
 4003) # update brand
   curl -X PUT $base_url/brand/"$2" \
