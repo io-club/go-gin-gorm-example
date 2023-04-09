@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CreateTrendRequest struct {
+type CreateClothRequest struct {
 	Name         string                  `form:"name" json:"name" binding:"required"`
 	Type         string                  `form:"type" json:"type" binding:"required"`
 	Detail       string                  `form:"detail" json:"detail" binding:"required"`
@@ -18,40 +18,34 @@ type CreateTrendRequest struct {
 	Images       []*multipart.FileHeader `form:"images" json:"images"`
 }
 
-func DeleteTrendById(c *gin.Context) {
+func DeleteClothById(c *gin.Context) {
 	id := c.Param("id")
-	trendId, err := strconv.ParseInt(id, 10, 64)
+	clothId, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		c.JSON(400, "err")
+		c.JSON(400, gin.H{"error": "parseint fail"})
 		return
 	}
-	err = model.DeleteTrendById(trendId)
+	err = model.DeleteClothById(clothId)
 	if err != nil {
-		c.JSON(404, gin.H{"err": "id 解析失败"})
+		c.JSON(404, gin.H{"error": "delete fail"})
+		return
 	}
-
+	c.JSON(200, gin.H{"success": "delete success"})
 }
-
-func GetTrendById(c *gin.Context) {
+func GetClothById(c *gin.Context) {
 	id := c.Param("id")
-	trendId, err := strconv.ParseInt(id, 10, 64)
-	trend, err := model.GetTrendById(trendId)
-	if err != nil {
-		c.JSON(404, gin.H{"err": "id 解析失败"})
-		return
-	}
-	model.GetTrendById(trendId)
-	if err != nil {
-		c.JSON(404, gin.H{"err": "trend 不存在"})
+	var cloth model.Cloth
+	if err := model.DB.First(&cloth, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "cloth not found"})
 		return
 	}
 	var images []model.Image
-	if err := model.DB.Where("table_name = ? AND record_id = ?", trend.TableName(), trend.ID).Find(&images).Error; err != nil {
+	if err := model.DB.Where("table_name = ? AND record_id = ?", cloth.TableName(), cloth.ID).Find(&images).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get images"})
 		return
 	}
-	var ret GetTrendResponse
-	ret.Trend = trend
+	var ret GetClothResponse
+	ret.Cloth = cloth
 	simpleImages := make([]SimpleImageResponse, len(images))
 	for i, image := range images {
 		simpleImages[i] = SimpleImageResponse{ID: int64(image.ID), Name: image.FileName}
@@ -61,26 +55,26 @@ func GetTrendById(c *gin.Context) {
 	c.JSON(http.StatusOK, ret)
 }
 
-type GetTrendResponse struct {
-	model.Trend
+type GetClothResponse struct {
+	model.Cloth
 	Images []SimpleImageResponse `json:"images"`
 }
 
-func CreateTrend(c *gin.Context) {
-	var req CreateTrendRequest
+func CreateCloth(c *gin.Context) {
+	var req CreateClothRequest
 	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "参数解析失败"})
 		return
 	}
 	filename := util.CreateFileName(req.PreviewImage)
 	if err := c.SaveUploadedFile(req.PreviewImage, "images/"+filename); err != nil {
-		c.JSON(500, gin.H{"error": "图片保存失败"})
+		c.JSON(500, gin.H{"error": "预览图保存失败"})
 		return
 	}
 
-	trend := model.Trend{Name: req.Name, Type: req.Type, Detail: req.Detail, ImageURL: filename}
-	if err := model.DB.Create(&trend).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "保存失败"})
+	cloth := model.Cloth{Name: req.Name, Detail: req.Detail, ImageURL: filename}
+	if err := model.DB.Create(&cloth).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "文件创建失败"})
 		return
 	}
 
@@ -91,28 +85,28 @@ func CreateTrend(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "图片保存失败"})
 			return
 		}
-		images = append(images, model.Image{TableName: model.Trend{}.TableName(), RecordID: trend.ID, FileName: filename})
+		images = append(images, model.Image{TableName: model.Cloth{}.TableName(), RecordID: cloth.ID, FileName: filename})
 	}
 	if err := model.CreateImages(images); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "图片保存失败"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "图片创建失败"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"status": "success", "trend": trend})
+	c.JSON(http.StatusCreated, gin.H{"status": "success", "cloth": cloth})
 }
 
-type UpdateTrendRequest struct {
+type UpdateClothRequest struct {
 	Name         *string               `form:"name" json:"name" `
 	Detail       *string               `form:"detail" json:"detail" `
 	PreviewImage *multipart.FileHeader `form:"image" json:"image"`
 }
 
-func UpdateTrend(c *gin.Context) {
+func UpdateCloth(c *gin.Context) {
 	id := c.Param("id")
-	var req UpdateTrendRequest
-	var old model.Trend
+	var req UpdateClothRequest
+	var old model.Cloth
 	if err := model.DB.First(&old, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Trend not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Cloth not found"})
 		return
 	}
 
@@ -138,51 +132,52 @@ func UpdateTrend(c *gin.Context) {
 	}
 
 	if err := model.DB.Save(&old).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update Trend"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update Cloth"})
 		return
 	}
 
 	c.JSON(http.StatusOK, old)
 }
 
-type GetTrendsRequest struct {
+type GetClothsRequest struct {
 	model.Pageable
 }
-type GetTrendsResponse struct {
-	model.Trend
+type GetClothsResponse struct {
+	model.Cloth
 	Images []SimpleImageResponse `json:"images"`
 }
 
-func GetTrends(c *gin.Context) {
-	var req GetTrendsRequest
+
+func GetCloths(c *gin.Context) {
+	var req GetClothsRequest
 	if err := c.BindQuery(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "参数解析失败"})
 		return
 	}
 
-	var trends []model.Trend
+	var cloths []model.Cloth
 
 	conn := model.DB
-	if err := conn.Limit(*req.Size).Offset((*req.Page - 1) * *req.Size).Order("id desc").Find(&trends).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get trends"})
+	if err := conn.Limit(*req.Size).Offset((*req.Page - 1) * *req.Size).Order("id desc").Find(&cloths).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get cloths"})
 		return
 	}
 
 	// 获取图片信息
-	imagesMap, err := model.GetImagesByRecordIds(model.Cloth{}.TableName(), model.GetIdsFromTrends(trends))
+	imagesMap, err := model.GetImagesByRecordIds(model.Cloth{}.TableName(), model.GetIdsFromCloths(cloths))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "图片信息获取失败"})
 		return
 	}
 
-	var ret []GetTrendsResponse
+	var ret []GetClothsResponse
 	// 将图片信息添加到面料信息中
-	for _, trend := range trends {
+	for _, cloth := range cloths {
 		images := make([]SimpleImageResponse, 0)
-		for _, image := range imagesMap[int64(trend.ID)] {
+		for _, image := range imagesMap[int64(cloth.ID)] {
 			images = append(images, SimpleImageResponse{int64(image.ID), image.FileName})
 		}
-		ret = append(ret, GetTrendsResponse{trend, images})
+		ret = append(ret, GetClothsResponse{cloth, images})
 	}
 
 	c.JSON(http.StatusOK, ret)

@@ -55,6 +55,32 @@ func main() {
 		trend.DELETE("/:id", api.DeleteTrendById)
 		trend.GET("/:id", api.GetTrendById)
 		trend.POST("", api.CreateTrend)
+		trend.PUT("/:id", api.UpdateTrend)
+		trend.GET("/list", api.GetTrends)
+	}
+	cloth := base.Group("/cloth")
+	{
+		cloth.DELETE("/:id", api.DeleteClothById)
+		cloth.GET("/:id", api.GetClothById)
+		cloth.POST("", api.CreateCloth)
+		cloth.PUT("/:id", api.UpdateCloth)
+		cloth.GET("/list", api.GetCloths)
+	}
+	dress := base.Group("/dress")
+	{
+		dress.DELETE("/:id", api.DeleteDressById)
+		dress.GET("/:id", api.GetDressById)
+		dress.POST("", api.CreateDress)
+		dress.PUT("/:id", api.UpdateDress)
+		dress.GET("/list", api.GetDresss)
+	}
+	news := base.Group("/news")
+	{
+		news.DELETE("/:id", api.DeleteNewsById)
+		news.GET("/:id", api.GetNewsById)
+		news.POST("", api.CreateNews)
+		news.PUT("/:id", api.UpdateNews)
+		news.GET("/list", api.GetNewss)
 	}
 	// 启动 HTTP 服务器
 	r.Run(":8080")

@@ -6,6 +6,8 @@ test:
 dev:
 	go run .
 build:
+	go build .
+build-static:
 	go build -ldflags "-linkmode=external -extldflags '-static'" .
 run:
 	./fabric
