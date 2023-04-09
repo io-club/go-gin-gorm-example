@@ -25,3 +25,23 @@ func DeleteTrendById(trendId int64) error {
 	result := DB.Delete(&trend, trendId)
 	return result.Error
 }
+
+func UpdateTrend(trend Trend) (Trend, error) {
+	result := DB.Updates(&trend)
+	return trend, result.Error
+}
+
+func GetIdsFromtrends(trends []Trend) []int64 {
+	ids := make([]int64, len(trends))
+	for i, trend := range trends {
+		ids[i] = int64(trend.ID)
+	}
+	return ids
+}
+func GetIdsFromTrends(trends []Trend) []int64 {
+	ids := make([]int64, len(trends))
+	for i, trend := range trends {
+		ids[i] = int64(trend.ID)
+	}
+	return ids
+}
