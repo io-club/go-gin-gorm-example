@@ -10,6 +10,10 @@ type Dress struct {
 	Type     string `gorm:"not null"`
 }
 
+func (dress Dress) TableName() string {
+	return "dress"
+}
+
 func GetIdsFromDresss(dresss []Dress) []int64 {
 	ids := make([]int64, len(dresss))
 	for i, dress := range dresss {
@@ -33,8 +37,4 @@ func GetDressById(id int) (Dress, error) {
 func UpdateDress(dress Dress) (Dress, error) {
 	result := DB.Updates(&dress)
 	return dress, result.Error
-}
-
-func (dress Dress) TableName() string {
-	return "dress"
 }

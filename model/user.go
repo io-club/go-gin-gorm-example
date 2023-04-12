@@ -10,7 +10,7 @@ type User struct {
 }
 
 func (user User) TableName() string {
-	return "users"
+	return "user"
 }
 
 func GetUserById(id int) (User, error) {

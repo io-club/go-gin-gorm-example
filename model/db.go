@@ -40,3 +40,23 @@ func init() {
 	DB.AutoMigrate(&Dress{})
 	DB.AutoMigrate(&News{})
 }
+
+var tableNames *[]string = nil
+
+func GetTableNames() []string {
+	if tableNames == nil {
+		tableNames = &[]string{}
+		DB.Raw("SHOW TABLES").Scan(tableNames)
+	}
+	return *tableNames
+}
+
+func TableExists(tableName string) bool {
+	tables := GetTableNames()
+	for _, table := range tables {
+		if table == tableName {
+			return true
+		}
+	}
+	return false
+}

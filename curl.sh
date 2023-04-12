@@ -55,8 +55,8 @@ case $1 in
   ;;
 3001) # upload images
   # 上传图片
-  # tableName: string required, 例如: fabrics, brands, ...
-  #     用于指定图片属于哪个表
+  # tableName: string required, 例如: fabric, brand, ...
+  #     用于指定图片属于哪个表，参考各个 api 的命名规则
   # recordId: string required, 例如: 1，2, ...
   # images: file required, 例如: a.jpg, b.jpg, ...
   #     图片可以传多个，但是数据库最多只能传 5 张
@@ -109,7 +109,7 @@ case $1 in
     -F "name=aaa" \
     -F "detail=bbb" \
     -F "image=@$2"
-  ;; 
+  ;;
 5003) # update trend
   curl -X PUT "$BASE_URL/trend/$2" \
     -F "name=aaa" \
@@ -133,7 +133,7 @@ case $1 in
     -F "name=aaa" \
     -F "detail=bbb" \
     -F "image=@$2"
-  ;; 
+  ;;
 6003) # update cloth
   curl -X PUT "$BASE_URL/cloth/$2" \
     -F "name=aaa" \
@@ -157,7 +157,7 @@ case $1 in
     -F "name=aaa" \
     -F "detail=bbb" \
     -F "image=@$2"
-  ;; 
+  ;;
 7003) # update dress
   curl -X PUT "$BASE_URL/dress/$2" \
     -F "name=aaa" \
@@ -181,7 +181,7 @@ case $1 in
     -F "name=aaa" \
     -F "detail=bbb" \
     -F "image=@$2"
-  ;; 
+  ;;
 8003) # update news
   curl -X PUT "$BASE_URL/news/$2" \
     -F "name=aaa" \

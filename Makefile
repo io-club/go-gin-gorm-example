@@ -20,4 +20,4 @@ remote-deploy:
 	ssh ${SERVER_SSH} "cd app && nohup ./fibric > log/fibric.log 2>&1 &"
 remote-clean:
 	ssh ${SERVER_SSH} "cd app && rm -f fibric"
-build_and_upload : build upload remote-deploy
+build_and_upload : build-static upload remote-deploy

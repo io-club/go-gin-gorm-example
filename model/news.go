@@ -4,9 +4,13 @@ import "gorm.io/gorm"
 
 type News struct {
 	gorm.Model
-	Title   string `gorm:"not null"`
-	Main    string `gorm:"not null"`
-	Type    string `gorm:"not null"`
+	Title string `gorm:"not null"`
+	Main  string `gorm:"not null"`
+	Type  string `gorm:"not null"`
+}
+
+func (news News) TableName() string {
+	return "news"
 }
 
 func GetIdsFromNewss(newss []News) []int64 {
@@ -31,8 +35,4 @@ func GetNewsById(id int) (News, error) {
 func UpdateNews(news News) (News, error) {
 	result := DB.Updates(&news)
 	return news, result.Error
-}
-
-func (news News) TableName() string {
-	return "news"
 }

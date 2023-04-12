@@ -53,6 +53,12 @@ func UploadImage(c *gin.Context) {
 		return
 	}
 
+	// check table exists
+	if !model.TableExists(req.TableName) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "表不存在"})
+		return
+	}
+
 	// count images in db
 	count, err := model.CountImagesByTableNameAndRecordId(req.TableName, req.RecordId)
 	if err != nil {

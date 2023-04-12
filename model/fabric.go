@@ -12,7 +12,7 @@ type Fabric struct {
 }
 
 func (fabric Fabric) TableName() string {
-	return "fabrics"
+	return "fabric"
 }
 
 func GetIdsFromFabrics(fabrics []Fabric) []int64 {
