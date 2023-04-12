@@ -175,7 +175,7 @@ func GetTrends(c *gin.Context) {
 		return
 	}
 
-	var ret []GetTrendsResponse
+	ret := []GetTrendsResponse{}
 	// 将图片信息添加到面料信息中
 	for _, trend := range trends {
 		images := make([]SimpleImageResponse, 0)
