@@ -136,11 +136,12 @@ func CreateNews(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{"status": "success", "news": news})
 }
+
 type UpdateNewsRequest struct {
-	Main         *string               `form:"main" json:"main" `
-	Title       *string               `form:"title" json:"title" `
-	PreviewImage *multipart.FileHeader `form:"image" json:"image"`
+	Main  *string `form:"main" json:"main" `
+	Title *string `form:"title" json:"title" `
 }
+
 func UpdateNews(c *gin.Context) {
 	id := c.Param("id")
 	var req UpdateNewsRequest
@@ -160,13 +161,6 @@ func UpdateNews(c *gin.Context) {
 	}
 	if req.Main != nil {
 		old.Main = *req.Main
-	}
-	if req.PreviewImage != nil {
-		filename := util.CreateFileName(req.PreviewImage)
-		if err := c.SaveUploadedFile(req.PreviewImage, "images/"+filename); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "预览图片保存失败"})
-			return
-		}
 	}
 
 	if err := model.DB.Save(&old).Error; err != nil {

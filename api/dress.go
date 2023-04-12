@@ -127,7 +127,6 @@ func UpdateDress(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "预览图片保存失败"})
 			return
 		}
-
 		old.ImageURL = filename
 	}
 
