@@ -10,6 +10,9 @@ type Cloth struct {
 	Type     string `gorm:"not null"`
 }
 
+func (cloth Cloth) TableName() string {
+	return "cloth"
+}
 
 func GetIdsFromCloths(cloths []Cloth) []int64 {
 	ids := make([]int64, len(cloths))
@@ -34,8 +37,4 @@ func GetClothById(id int) (Cloth, error) {
 func UpdateCloth(cloth Cloth) (Cloth, error) {
 	result := DB.Updates(&cloth)
 	return cloth, result.Error
-}
-
-func (cloth Cloth) TableName() string {
-	return "cloth"
 }
