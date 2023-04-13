@@ -62,6 +62,7 @@ type GetNewsResponse struct {
 
 type GetNewssRequest struct {
 	model.Pageable
+	Type *string `form:"type" json:"type" `
 }
 type GetNewssResponse struct {
 	model.News
@@ -78,6 +79,9 @@ func GetNewss(c *gin.Context) {
 	var newss []model.News
 
 	conn := model.DB
+	if req.Type != nil {
+		conn = conn.Where("type = ?", *req.Type)
+	}
 	if err := conn.Limit(*req.Size).Offset((*req.Page - 1) * *req.Size).Order("id desc").Find(&newss).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get newss"})
 		return
@@ -108,6 +112,12 @@ func CreateNews(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "参数解析失败"})
 		return
 	}
+
+	if !model.NewsTypeExists(req.Type) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "面料类型不存在"})
+		return
+	}
+
 	filename := util.CreateFileName(req.PreviewImage)
 	if err := c.SaveUploadedFile(req.PreviewImage, "images/"+filename); err != nil {
 		c.JSON(500, gin.H{"error": "预览图保存失败"})
@@ -140,6 +150,7 @@ func CreateNews(c *gin.Context) {
 type UpdateNewsRequest struct {
 	Main  *string `form:"main" json:"main" `
 	Title *string `form:"title" json:"title" `
+	Type  *string `form:"type" json:"type" `
 }
 
 func UpdateNews(c *gin.Context) {
@@ -161,6 +172,9 @@ func UpdateNews(c *gin.Context) {
 	}
 	if req.Main != nil {
 		old.Main = *req.Main
+	}
+	if req.Type != nil {
+		old.Type = *req.Type
 	}
 
 	if err := model.DB.Save(&old).Error; err != nil {

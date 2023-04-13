@@ -8,7 +8,7 @@ dev:
 build:
 	go build .
 build-static:
-	go build -ldflags "-linkmode=external -extldflags '-static'" .
+	nix-shell shell.nix --run "go build -ldflags \"-linkmode=external -extldflags '-static'\" ."
 run:
 	./fabric
 upload:
@@ -20,4 +20,5 @@ remote-deploy:
 	ssh ${SERVER_SSH} "cd app && nohup ./fibric > log/fibric.log 2>&1 &"
 remote-clean:
 	ssh ${SERVER_SSH} "cd app && rm -f fibric"
-build_and_upload : build-static upload remote-deploy
+build_and_upload : build upload remote-deploy
+static-build_and_upload : build-static upload remote-deploy

@@ -9,6 +9,27 @@ type News struct {
 	Type  string `gorm:"not null"`
 }
 
+type NewsType string
+
+const (
+	// 行业资讯
+	NewsTypeIndustry NewsType = "industry"
+	// 校企合作
+	NewsTypeSchoolCompany NewsType = "school_company"
+)
+
+func GetNewsTypeList() []NewsType {
+	return []NewsType{NewsTypeIndustry, NewsTypeSchoolCompany}
+}
+func NewsTypeExists(newsType string) bool {
+	for _, t := range GetNewsTypeList() {
+		if string(t) == newsType {
+			return true
+		}
+	}
+	return false
+}
+
 func (news News) TableName() string {
 	return "news"
 }

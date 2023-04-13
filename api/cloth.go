@@ -98,6 +98,7 @@ func CreateCloth(c *gin.Context) {
 type UpdateClothRequest struct {
 	Name         *string               `form:"name" json:"name" `
 	Detail       *string               `form:"detail" json:"detail" `
+	Type         *string               `form:"type" json:"type"`
 	PreviewImage *multipart.FileHeader `form:"image" json:"image"`
 }
 
@@ -121,6 +122,9 @@ func UpdateCloth(c *gin.Context) {
 	if req.Detail != nil {
 		old.Detail = *req.Detail
 	}
+	if req.Type != nil {
+		old.Type = *req.Type
+	}
 	if req.PreviewImage != nil {
 		filename := util.CreateFileName(req.PreviewImage)
 		if err := c.SaveUploadedFile(req.PreviewImage, "images/"+filename); err != nil {
@@ -141,6 +145,8 @@ func UpdateCloth(c *gin.Context) {
 
 type GetClothsRequest struct {
 	model.Pageable
+	Name *string `form:"name" json:"name"`
+	Type *string `form:"type" json:"type"`
 }
 type GetClothsResponse struct {
 	model.Cloth
@@ -157,6 +163,12 @@ func GetCloths(c *gin.Context) {
 	var cloths []model.Cloth
 
 	conn := model.DB
+	if req.Name != nil {
+		conn = conn.Where("name like ?", "%"+*req.Name+"%")
+	}
+	if req.Type != nil {
+		conn = conn.Where("type = ?", *req.Type)
+	}
 	if err := conn.Limit(*req.Size).Offset((*req.Page - 1) * *req.Size).Order("id desc").Find(&cloths).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get cloths"})
 		return

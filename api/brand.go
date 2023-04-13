@@ -141,6 +141,7 @@ func UpdateBrand(c *gin.Context) {
 
 type GetBrandsRequest struct {
 	model.Pageable
+	Name *string `form:"name" json:"name"`
 }
 type GetBrandsResponse struct {
 	model.Brand
@@ -157,6 +158,9 @@ func GetBrands(c *gin.Context) {
 	brands := []model.Brand{}
 
 	conn := model.DB
+	if req.Name != nil {
+		conn = conn.Where("name like ?", "%"+*req.Name+"%")
+	}
 	if err := conn.Limit(*req.Size).Offset((*req.Page - 1) * *req.Size).Order("id desc").Find(&brands).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get brands"})
 		return

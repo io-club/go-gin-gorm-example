@@ -104,6 +104,7 @@ func CreateTrend(c *gin.Context) {
 type UpdateTrendRequest struct {
 	Name         *string               `form:"name" json:"name" `
 	Detail       *string               `form:"detail" json:"detail" `
+	Type         *string               `form:"type" json:"type" `
 	PreviewImage *multipart.FileHeader `form:"image" json:"image"`
 }
 
@@ -127,6 +128,9 @@ func UpdateTrend(c *gin.Context) {
 	if req.Detail != nil {
 		old.Detail = *req.Detail
 	}
+	if req.Type != nil {
+		old.Type = *req.Type
+	}
 	if req.PreviewImage != nil {
 		filename := util.CreateFileName(req.PreviewImage)
 		if err := c.SaveUploadedFile(req.PreviewImage, "images/"+filename); err != nil {
@@ -147,6 +151,8 @@ func UpdateTrend(c *gin.Context) {
 
 type GetTrendsRequest struct {
 	model.Pageable
+	Name *string `form:"name" json:"name" `
+	Type *string `form:"type" json:"type" `
 }
 type GetTrendsResponse struct {
 	model.Trend
@@ -163,6 +169,12 @@ func GetTrends(c *gin.Context) {
 	var trends []model.Trend
 
 	conn := model.DB
+	if req.Name != nil {
+		conn = conn.Where("name LIKE ?", "%"+*req.Name+"%")
+	}
+	if req.Type != nil {
+		conn = conn.Where("type = ?", *req.Type)
+	}
 	if err := conn.Limit(*req.Size).Offset((*req.Page - 1) * *req.Size).Order("id desc").Find(&trends).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get trends"})
 		return
