@@ -90,7 +90,7 @@ func GetNewss(c *gin.Context) {
 		return
 	}
 
-	var ret []GetNewssResponse
+	ret := []GetNewssResponse{}
 	// 将图片信息添加到面料信息中
 	for _, news := range newss {
 		images := make([]SimpleImageResponse, 0)

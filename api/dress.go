@@ -168,7 +168,7 @@ func GetDresss(c *gin.Context) {
 		return
 	}
 
-	var ret []GetDresssResponse
+	ret := []GetDresssResponse{}
 	// 将图片信息添加到面料信息中
 	for _, dress := range dresss {
 		images := make([]SimpleImageResponse, 0)

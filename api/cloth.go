@@ -147,7 +147,6 @@ type GetClothsResponse struct {
 	Images []SimpleImageResponse `json:"images"`
 }
 
-
 func GetCloths(c *gin.Context) {
 	var req GetClothsRequest
 	if err := c.BindQuery(&req); err != nil {
@@ -170,7 +169,7 @@ func GetCloths(c *gin.Context) {
 		return
 	}
 
-	var ret []GetClothsResponse
+	ret := []GetClothsResponse{}
 	// 将图片信息添加到面料信息中
 	for _, cloth := range cloths {
 		images := make([]SimpleImageResponse, 0)
