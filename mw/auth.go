@@ -19,7 +19,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		user, err := model.GetUserById(userId.(int))
+		user, err := model.GetUserById(userId.(uint))
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "服务器错误"})
 			c.Abort()

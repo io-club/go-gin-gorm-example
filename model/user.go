@@ -13,7 +13,7 @@ func (user User) TableName() string {
 	return "user"
 }
 
-func GetUserById(id int) (User, error) {
+func GetUserById(id uint) (User, error) {
 	var user User
 	result := DB.First(&user, id)
 	return user, result.Error
