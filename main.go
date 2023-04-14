@@ -3,6 +3,7 @@ package main
 import (
 	"fibric/api"
 	"fibric/model"
+	"fibric/mw"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -27,14 +28,15 @@ func main() {
 	{
 		auth.POST("/login", api.Login)
 		auth.POST("/register", api.Register)
+		auth.GET("logout", api.Logout)
 	}
-	image := base.Group("/image")
+	image := base.Group("/image").Use(mw.AuthMiddleware())
 	{
 		image.POST("/upload", api.UploadImage)
 		image.DELETE("/:id", api.DeleteImageById)
 		// image.DELETE("/", api.DeleteImagesByRecordId)
 	}
-	fabric := base.Group("/fabric")
+	fabric := base.Group("/fabric").Use(mw.AuthMiddleware())
 	{
 		fabric.POST("", api.CreateFabric)
 		fabric.GET("/:id", api.GetFabric)

@@ -82,3 +82,10 @@ func Register(c *gin.Context) {
 	model.DB.Create(&user)
 	c.JSON(http.StatusOK, gin.H{"message": "register success"})
 }
+
+func Logout(c *gin.Context) {
+	session := sessions.Default(c)
+	session.Clear()
+	session.Save()
+	c.JSON(http.StatusOK, gin.H{"message": "logout success"})
+}
