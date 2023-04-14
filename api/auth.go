@@ -52,33 +52,38 @@ func Login(c *gin.Context) {
 type RegisterRequest struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
+	Admin    *bool  `json:"admin"`
 }
 
 // 注册
 func Register(c *gin.Context) {
-	var form struct {
-		Username string `json:"username" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
-	if err := c.ShouldBindJSON(&form); err != nil {
+	var req RegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	// 判断用户名是否已经存在
 	var user model.User
-	result := model.DB.Where("username = ?", form.Username).First(&user)
+	result := model.DB.Where("username = ?", req.Username).First(&user)
 	if result.Error == nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "username already exists"})
 		return
 	}
 	// 对密码进行哈希处理
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(form.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to hash password"})
 		return
 	}
+
 	// 创建用户
-	user = model.User{Username: form.Username, Password: string(hashedPassword)}
+	user = model.User{Username: req.Username, Password: string(hashedPassword)}
+
+	if req.Admin != nil && *req.Admin {
+		user.Role = "admin"
+	}
+
 	model.DB.Create(&user)
 	c.JSON(http.StatusOK, gin.H{"message": "register success"})
 }

@@ -27,6 +27,6 @@ func CheckToken(tokenString string) (uint, error) {
 	if !ok {
 		return 0, err
 	}
-	userID := uint(claims["userID"].(uint))
+	userID := uint(claims["userID"].(float64))
 	return userID, nil
 }

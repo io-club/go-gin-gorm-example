@@ -42,7 +42,7 @@ func CheckLoginMiddleware() gin.HandlerFunc {
 func CheckSuperAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, _ := c.Get("user")
-		if user.(model.User).Role != "super_admin" {
+		if user.(model.User).Role != "admin" {
 			c.JSON(http.StatusForbidden, gin.H{"error": "无权限"})
 			c.Abort()
 			return
