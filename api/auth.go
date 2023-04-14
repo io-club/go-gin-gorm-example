@@ -2,8 +2,8 @@ package api
 
 import (
 	"fibric/model"
+	"fibric/util"
 	"net/http"
-	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -36,11 +36,11 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "username or password incorrect"})
 		return
 	}
+	// 生成 jwt
+	token, err := util.GenerateToken(user.ID)
 	// 保存登录状态到 session
 	session := sessions.Default(c)
-	session.Set("userID", user.ID)
-	session.Set("username", user.Username)
-	session.Set("loginTime", time.Now().Unix())
+	session.Set("token", token)
 	if err := session.Save(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save session"})
 		return
