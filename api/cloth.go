@@ -72,7 +72,7 @@ func CreateCloth(c *gin.Context) {
 		return
 	}
 
-	cloth := model.Cloth{Name: req.Name, Detail: req.Detail, ImageURL: filename}
+	cloth := model.Cloth{Name: req.Name, Detail: req.Detail, Type: req.Type, ImageURL: filename}
 	if err := model.DB.Create(&cloth).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "文件创建失败"})
 		return

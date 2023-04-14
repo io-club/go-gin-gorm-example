@@ -21,4 +21,4 @@ remote-deploy:
 remote-clean:
 	ssh ${SERVER_SSH} "cd app && rm -f fibric"
 build_and_upload : build upload remote-deploy
-static-build_and_upload : build-static upload remote-deploy
+static-build_and_upload : build-static remote-stop remote-clean upload remote-deploy

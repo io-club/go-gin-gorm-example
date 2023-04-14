@@ -72,7 +72,7 @@ func CreateDress(c *gin.Context) {
 		return
 	}
 
-	dress := model.Dress{Name: req.Name, Detail: req.Detail, ImageURL: filename}
+	dress := model.Dress{Name: req.Name, Type: req.Type, Detail: req.Detail, ImageURL: filename}
 	if err := model.DB.Create(&dress).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "文件创建失败"})
 		return
