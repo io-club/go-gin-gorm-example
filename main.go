@@ -32,56 +32,56 @@ func main() {
 	}
 	image := base.Group("/image").Use(mw.CheckLoginMiddleware())
 	{
-		image.POST("/upload", api.UploadImage).Use(mw.CheckSuperAdmin())
-		image.DELETE("/:id", api.DeleteImageById).Use(mw.CheckSuperAdmin())
+		image.POST("/upload", mw.CheckSuperAdmin(), api.UploadImage)
+		image.DELETE("/:id", mw.CheckSuperAdmin(), api.DeleteImageById)
 		// image.DELETE("/", api.DeleteImagesByRecordId)
 	}
 	fabric := base.Group("/fabric").Use(mw.CheckLoginMiddleware())
 	{
-		fabric.POST("", api.CreateFabric).Use(mw.CheckSuperAdmin())
+		fabric.POST("", mw.CheckSuperAdmin(), api.CreateFabric)
 		fabric.GET("/:id", api.GetFabric)
-		fabric.PUT("/:id", api.UpdateFabric).Use(mw.CheckSuperAdmin())
-		fabric.DELETE("/:id", api.DeleteFabric).Use(mw.CheckSuperAdmin())
+		fabric.PUT("/:id", mw.CheckSuperAdmin(), api.UpdateFabric)
+		fabric.DELETE("/:id", mw.CheckSuperAdmin(), api.DeleteFabric)
 		fabric.GET("/list", api.GetFabrics)
 	}
 	brand := base.Group("/brand").Use(mw.CheckLoginMiddleware())
 	{
-		brand.DELETE("/:id", api.DeleteBrandById).Use(mw.CheckSuperAdmin())
+		brand.DELETE("/:id", mw.CheckSuperAdmin(), api.DeleteBrandById)
 		brand.GET("/:id", api.GetBrandById)
-		brand.POST("", api.CreateBrand).Use(mw.CheckSuperAdmin())
-		brand.PUT("/:id", api.UpdateBrand).Use(mw.CheckSuperAdmin())
+		brand.POST("", mw.CheckSuperAdmin(), api.CreateBrand)
+		brand.PUT("/:id", mw.CheckSuperAdmin(), api.UpdateBrand)
 		brand.GET("/list", api.GetBrands)
 	}
 	trend := base.Group("/trend").Use(mw.CheckLoginMiddleware())
 	{
-		trend.DELETE("/:id", api.DeleteTrendById).Use(mw.CheckSuperAdmin())
+		trend.DELETE("/:id", mw.CheckSuperAdmin(), api.DeleteTrendById)
 		trend.GET("/:id", api.GetTrendById)
-		trend.POST("", api.CreateTrend).Use(mw.CheckSuperAdmin())
-		trend.PUT("/:id", api.UpdateTrend).Use(mw.CheckSuperAdmin())
+		trend.POST("", mw.CheckSuperAdmin(), api.CreateTrend)
+		trend.PUT("/:id", mw.CheckSuperAdmin(), api.UpdateTrend)
 		trend.GET("/list", api.GetTrends)
 	}
 	cloth := base.Group("/cloth").Use(mw.CheckLoginMiddleware())
 	{
-		cloth.DELETE("/:id", api.DeleteClothById).Use(mw.CheckSuperAdmin())
+		cloth.DELETE("/:id", mw.CheckSuperAdmin(), api.DeleteClothById)
 		cloth.GET("/:id", api.GetClothById)
-		cloth.POST("", api.CreateCloth).Use(mw.CheckSuperAdmin())
-		cloth.PUT("/:id", api.UpdateCloth).Use(mw.CheckSuperAdmin())
+		cloth.POST("", mw.CheckSuperAdmin(), api.CreateCloth)
+		cloth.PUT("/:id", mw.CheckSuperAdmin(), api.UpdateCloth)
 		cloth.GET("/list", api.GetCloths)
 	}
 	dress := base.Group("/dress").Use(mw.CheckLoginMiddleware())
 	{
-		dress.DELETE("/:id", api.DeleteDressById).Use(mw.CheckSuperAdmin())
+		dress.DELETE("/:id", mw.CheckSuperAdmin(), api.DeleteDressById)
 		dress.GET("/:id", api.GetDressById)
-		dress.POST("", api.CreateDress).Use(mw.CheckSuperAdmin())
-		dress.PUT("/:id", api.UpdateDress).Use(mw.CheckSuperAdmin())
+		dress.POST("", mw.CheckSuperAdmin(), api.CreateDress)
+		dress.PUT("/:id", mw.CheckSuperAdmin(), api.UpdateDress)
 		dress.GET("/list", api.GetDresss)
 	}
 	news := base.Group("/news").Use(mw.CheckLoginMiddleware())
 	{
-		news.DELETE("/:id", api.DeleteNewsById).Use(mw.CheckSuperAdmin())
+		news.DELETE("/:id", mw.CheckSuperAdmin(), api.DeleteNewsById)
 		news.GET("/:id", api.GetNewsById)
-		news.POST("", api.CreateNews).Use(mw.CheckSuperAdmin())
-		news.PUT("/:id", api.UpdateNews).Use(mw.CheckSuperAdmin())
+		news.POST("", mw.CheckSuperAdmin(), api.CreateNews)
+		news.PUT("/:id", mw.CheckSuperAdmin(), api.UpdateNews)
 		news.GET("/list", api.GetNewss)
 	}
 	// 启动 HTTP 服务器
