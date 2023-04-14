@@ -28,7 +28,7 @@ func main() {
 	{
 		auth.POST("/login", api.Login)
 		auth.POST("/register", api.Register)
-		auth.GET("logout", api.Logout)
+		auth.GET("/logout", api.Logout)
 	}
 	image := base.Group("/image").Use(mw.AuthMiddleware())
 	{
@@ -44,7 +44,7 @@ func main() {
 		fabric.DELETE("/:id", api.DeleteFabric)
 		fabric.GET("/list", api.GetFabrics)
 	}
-	brand := base.Group("/brand")
+	brand := base.Group("/brand").Use(mw.AuthMiddleware())
 	{
 		brand.DELETE("/:id", api.DeleteBrandById)
 		brand.GET("/:id", api.GetBrandById)
@@ -52,7 +52,7 @@ func main() {
 		brand.PUT("/:id", api.UpdateBrand)
 		brand.GET("/list", api.GetBrands)
 	}
-	trend := base.Group("/trend")
+	trend := base.Group("/trend").Use(mw.AuthMiddleware())
 	{
 		trend.DELETE("/:id", api.DeleteTrendById)
 		trend.GET("/:id", api.GetTrendById)
@@ -60,7 +60,7 @@ func main() {
 		trend.PUT("/:id", api.UpdateTrend)
 		trend.GET("/list", api.GetTrends)
 	}
-	cloth := base.Group("/cloth")
+	cloth := base.Group("/cloth").Use(mw.AuthMiddleware())
 	{
 		cloth.DELETE("/:id", api.DeleteClothById)
 		cloth.GET("/:id", api.GetClothById)
@@ -68,7 +68,7 @@ func main() {
 		cloth.PUT("/:id", api.UpdateCloth)
 		cloth.GET("/list", api.GetCloths)
 	}
-	dress := base.Group("/dress")
+	dress := base.Group("/dress").Use(mw.AuthMiddleware())
 	{
 		dress.DELETE("/:id", api.DeleteDressById)
 		dress.GET("/:id", api.GetDressById)
@@ -76,7 +76,7 @@ func main() {
 		dress.PUT("/:id", api.UpdateDress)
 		dress.GET("/list", api.GetDresss)
 	}
-	news := base.Group("/news")
+	news := base.Group("/news").Use(mw.AuthMiddleware())
 	{
 		news.DELETE("/:id", api.DeleteNewsById)
 		news.GET("/:id", api.GetNewsById)
