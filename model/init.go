@@ -47,8 +47,14 @@ var tableNames *[]string = nil
 
 func GetTableNames() []string {
 	if tableNames == nil {
-		tableNames = &[]string{}
-		DB.Raw("SHOW TABLES").Scan(tableNames)
+		tableNames = &[]string{
+			Fabric{}.TableName(),
+			Brand{}.TableName(),
+			Trend{}.TableName(),
+			Cloth{}.TableName(),
+			Dress{}.TableName(),
+			News{}.TableName(),
+		}
 	}
 	return *tableNames
 }

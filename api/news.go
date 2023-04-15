@@ -11,9 +11,9 @@ import (
 )
 
 type CreateNewsRequest struct {
-	Main         string                  `form:"name" json:"Main" binding:"required"`
+	Main         string                  `form:"main" json:"main" binding:"required"`
 	Type         string                  `form:"type" json:"type" binding:"required"`
-	Title        string                  `form:"detail" json:"title" binding:"required"`
+	Title        string                  `form:"title" json:"title" binding:"required"`
 	PreviewImage *multipart.FileHeader   `form:"image" json:"image" binding:"required"`
 	Images       []*multipart.FileHeader `form:"images" json:"images"`
 }
@@ -124,7 +124,7 @@ func CreateNews(c *gin.Context) {
 		return
 	}
 
-	news := model.News{Main: req.Main, Title: req.Title}
+	news := model.News{Main: req.Main, Title: req.Title, Type: req.Type}
 	if err := model.DB.Create(&news).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "文件创建失败"})
 		return

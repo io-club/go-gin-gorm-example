@@ -47,8 +47,8 @@ case $1 in
 2003) # update fabric
   curl -X PUT "$BASE_URL/fabric/$2" \
     -F "name=aaa1"
-    # -F "detail=bbb2" \
-    # -F "image=@$3"
+  # -F "detail=bbb2" \
+  # -F "image=@$3"
   ;;
 2004) # delete fabric
   curl -X DELETE "$BASE_URL/fabric/$2"
@@ -65,8 +65,8 @@ case $1 in
     -F "tableName=$2" \
     -F "recordId=$3" \
     -F "images=@$4"
-    # -F "images=@/home/trdthg/resources/a.jpg" \
-    # -F "images=@/home/trdthg/resources/a.jpg" \
+  # -F "images=@/home/trdthg/resources/a.jpg" \
+  # -F "images=@/home/trdthg/resources/a.jpg" \
   ;;
 3002) # delete image
   curl -X DELETE "$BASE_URL/image/$2"
@@ -82,7 +82,7 @@ case $1 in
   ;;
 4002) # create brand
   curl -X POST $BASE_URL/brand \
-    -F "name=aaa" \
+    -F "name=例如" \
     -F "detail=bbb" \
     -F "image=@${2}"
   ;;
@@ -177,9 +177,11 @@ case $1 in
   curl -X GET "$BASE_URL/news/$2"
   ;;
 8002) # create news
+  # type: industry | school_company
   curl -X POST $BASE_URL/news \
-    -F "name=aaa" \
-    -F "detail=bbb" \
+    -F "main=aaa" \
+    -F "title=bbb" \
+    -F "type=industry" \
     -F "image=@$2"
   ;;
 8003) # update news

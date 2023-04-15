@@ -1,6 +1,7 @@
 package mw
 
 import (
+	"fibric/config"
 	"fibric/model"
 	"fibric/util"
 	"net/http"
@@ -11,6 +12,12 @@ import (
 
 func CheckLoginMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		if config.MODE == "debug" {
+			c.Next()
+			return
+		}
+
 		session := sessions.Default(c)
 
 		token := session.Get("token")
@@ -41,6 +48,12 @@ func CheckLoginMiddleware() gin.HandlerFunc {
 
 func CheckSuperAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		if config.MODE == "debug" {
+			c.Next()
+			return
+		}
+
 		user, _ := c.Get("user")
 		if user.(model.User).Role != "admin" {
 			c.JSON(http.StatusForbidden, gin.H{"error": "无权限"})
