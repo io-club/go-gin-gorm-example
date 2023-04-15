@@ -2,7 +2,7 @@ package main
 
 import (
 	"fibric/api"
-	"fibric/model"
+	"fibric/config"
 	"fibric/mw"
 	"net/http"
 
@@ -16,7 +16,7 @@ func main() {
 	r := gin.Default()
 
 	// 使用 cookie 作为 session 存储方式
-	store := cookie.NewStore([]byte(model.SessionSecret))
+	store := cookie.NewStore([]byte(config.SessionSecret))
 	r.Use(sessions.Sessions("session", store))
 
 	// 注册路由
