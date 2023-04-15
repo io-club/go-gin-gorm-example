@@ -89,3 +89,8 @@ func UploadImage(c *gin.Context) {
 
 	c.Status(http.StatusOK)
 }
+
+type SimpleImageResponse struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}

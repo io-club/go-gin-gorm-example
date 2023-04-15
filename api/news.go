@@ -61,7 +61,7 @@ type GetNewsResponse struct {
 }
 
 type GetNewssRequest struct {
-	model.Pageable
+	Pageable
 	Type *string `form:"type" json:"type" `
 }
 type GetNewssResponse struct {

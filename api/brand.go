@@ -140,7 +140,7 @@ func UpdateBrand(c *gin.Context) {
 }
 
 type GetBrandsRequest struct {
-	model.Pageable
+	Pageable
 	Name *string `form:"name" json:"name"`
 }
 type GetBrandsResponse struct {

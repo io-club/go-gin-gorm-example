@@ -3,6 +3,8 @@ package model
 import (
 	"fmt"
 
+	"fibric/config"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -13,12 +15,12 @@ var DB *gorm.DB
 func init() {
 	var db *gorm.DB
 	var err error
-	switch MODE {
+	switch config.MODE {
 	case "debug":
 		// connect to sqlite
 		db, err = gorm.Open(sqlite.Open("./cache/test.db"), &gorm.Config{})
 	case "release":
-		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local", DBUser, DBPassword, DBHost, DBPort, DBName, DBCharset)
+		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local", config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName, config.DBCharset)
 		// set timeout
 		dsn += "&timeout=10s&readTimeout=30s&writeTimeout=30s&parseTime=true"
 		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})

@@ -150,7 +150,7 @@ func UpdateTrend(c *gin.Context) {
 }
 
 type GetTrendsRequest struct {
-	model.Pageable
+	Pageable
 	Name *string `form:"name" json:"name" `
 	Type *string `form:"type" json:"type" `
 }

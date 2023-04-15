@@ -95,7 +95,7 @@ func GetFabric(c *gin.Context) {
 }
 
 type GetFabricsRequest struct {
-	model.Pageable
+	Pageable
 	Category string `form:"category" json:"category"`
 }
 type GetFabricsResponse struct {
