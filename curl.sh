@@ -17,20 +17,20 @@ set -eux
 case $1 in
 1000) # register
   curl -X POST "$BASE_URL"/auth/register -d '{
-    "username": "test1",
+    "username": "test",
     "password": "123"
   }'
   ;;
 1001) # login
   curl -X POST "$BASE_URL"/auth/login -d '{
-    "username": "test1",
+    "username": "test",
     "password": "123"
   }'
   ;;
 2000) # get fabrics list
   # query:
   #     - page: int required, 例如: 1, 2, 3, ...
-  #     - size: int required, 例如: 10, 20, 30, ...
+  #     - size: int req uired, 例如: 10, 20, 30, ...
   #     - category: string optional, 例如: defult, new, hot, ...
   curl -X GET "$BASE_URL/fabric/list?page=1&size=10&category=default"
   ;;
@@ -60,7 +60,6 @@ case $1 in
   # recordId: string required, 例如: 1，2, ...
   # images: file required, 例如: a.jpg, b.jpg, ...
   #     图片可以传多个，但是数据库最多只能传 5 张
-
   curl -X POST $BASE_URL/image/upload \
     -F "tableName=$2" \
     -F "recordId=$3" \
@@ -155,7 +154,8 @@ case $1 in
 7002) # create dress
   curl -X POST $BASE_URL/dress \
     -F "name=aaa" \
-    -F "detail=bbb" \
+    -F "detail=例如" \
+    -F "type=default" \
     -F "image=@$2"
   ;;
 7003) # update dress
@@ -179,14 +179,14 @@ case $1 in
 8002) # create news
   # type: industry | school_company
   curl -X POST $BASE_URL/news \
-    -F "main=aaa" \
+    -F "main=你好" \
     -F "title=bbb" \
     -F "type=industry" \
     -F "image=@$2"
   ;;
 8003) # update news
   curl -X PUT "$BASE_URL/news/$2" \
-    -F "name=aaa" \
+    -F "name=你好" \
     -F "detail=bbb2" \
     -F "image=@$3"
   ;;

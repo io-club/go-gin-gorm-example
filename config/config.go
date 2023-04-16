@@ -9,6 +9,7 @@ import (
 
 var (
 	MODE       string
+	DB_MODE    string
 	DBHost     string
 	DBPort     string
 	DBUser     string
@@ -26,6 +27,7 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 	MODE = os.Getenv("MODE")
+	DB_MODE = os.Getenv("DB_MODE")
 	DBHost = os.Getenv("DB_HOST")
 	DBPort = os.Getenv("DB_PORT")
 	DBUser = os.Getenv("DB_USER")

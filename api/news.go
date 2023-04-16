@@ -3,20 +3,13 @@ package api
 import (
 	"fibric/model"
 	"fibric/util"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
-
-type CreateNewsRequest struct {
-	Main         string                  `form:"main" json:"main" binding:"required"`
-	Type         string                  `form:"type" json:"type" binding:"required"`
-	Title        string                  `form:"title" json:"title" binding:"required"`
-	PreviewImage *multipart.FileHeader   `form:"image" json:"image" binding:"required"`
-	Images       []*multipart.FileHeader `form:"images" json:"images"`
-}
 
 func DeleteNewsById(c *gin.Context) {
 	id := c.Param("id")
@@ -32,6 +25,7 @@ func DeleteNewsById(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{"success": "delete success"})
 }
+
 func GetNewsById(c *gin.Context) {
 	id := c.Param("id")
 	var news model.News
@@ -39,11 +33,13 @@ func GetNewsById(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "news not found"})
 		return
 	}
-	var images []model.Image
-	if err := model.DB.Where("table_name = ? AND record_id = ?", news.TableName(), news.ID).Find(&images).Error; err != nil {
+
+	images, err := model.GetImagesById(news.TableName(), int64(news.ID))
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get images"})
 		return
 	}
+
 	var ret GetNewsResponse
 	ret.News = news
 	simpleImages := make([]SimpleImageResponse, len(images))
@@ -106,12 +102,22 @@ func GetNewss(c *gin.Context) {
 
 	c.JSON(http.StatusOK, ret)
 }
+
+type CreateNewsRequest struct {
+	Main         string                  `form:"main" json:"main" binding:"required"`
+	Type         string                  `form:"type" json:"type" binding:"required"`
+	Title        string                  `form:"title" json:"title" binding:"required"`
+	PreviewImage *multipart.FileHeader   `form:"image" json:"image" binding:"required"`
+	Images       []*multipart.FileHeader `form:"images" json:"images"`
+}
+
 func CreateNews(c *gin.Context) {
 	var req CreateNewsRequest
 	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "参数解析失败"})
 		return
 	}
+	fmt.Printf("main: %v\n", req.Main)
 
 	if !model.NewsTypeExists(req.Type) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "面料类型不存在"})
@@ -124,7 +130,7 @@ func CreateNews(c *gin.Context) {
 		return
 	}
 
-	news := model.News{Main: req.Main, Title: req.Title, Type: req.Type}
+	news := model.News{Main: req.Main, Title: req.Title, Type: req.Type, ImageURL: filename}
 	if err := model.DB.Create(&news).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "文件创建失败"})
 		return
@@ -139,6 +145,7 @@ func CreateNews(c *gin.Context) {
 		}
 		images = append(images, model.Image{TableName: model.News{}.TableName(), RecordID: news.ID, FileName: filename})
 	}
+
 	if err := model.CreateImages(images); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "图片创建失败"})
 		return
@@ -148,9 +155,10 @@ func CreateNews(c *gin.Context) {
 }
 
 type UpdateNewsRequest struct {
-	Main  *string `form:"main" json:"main" `
-	Title *string `form:"title" json:"title" `
-	Type  *string `form:"type" json:"type" `
+	Main         *string               `form:"main" json:"main" `
+	Title        *string               `form:"title" json:"title" `
+	Type         *string               `form:"type" json:"type" `
+	PreviewImage *multipart.FileHeader `form:"image" json:"image"`
 }
 
 func UpdateNews(c *gin.Context) {
@@ -175,6 +183,14 @@ func UpdateNews(c *gin.Context) {
 	}
 	if req.Type != nil {
 		old.Type = *req.Type
+	}
+	if req.PreviewImage != nil {
+		filename := util.CreateFileName(req.PreviewImage)
+		if err := c.SaveUploadedFile(req.PreviewImage, "images/"+filename); err != nil {
+			c.JSON(500, gin.H{"error": "预览图保存失败"})
+			return
+		}
+		old.ImageURL = filename
 	}
 
 	if err := model.DB.Save(&old).Error; err != nil {

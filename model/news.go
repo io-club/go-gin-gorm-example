@@ -4,9 +4,14 @@ import "gorm.io/gorm"
 
 type News struct {
 	gorm.Model
-	Title string `gorm:"not null"`
-	Main  string `gorm:"not null"`
-	Type  string `gorm:"not null"`
+	Title    string `gorm:"not null"`
+	Main     string `gorm:"not null"`
+	Type     string `gorm:"not null"`
+	ImageURL string ``
+}
+
+func (news News) TableName() string {
+	return "news"
 }
 
 type NewsType string
@@ -28,10 +33,6 @@ func NewsTypeExists(newsType string) bool {
 		}
 	}
 	return false
-}
-
-func (news News) TableName() string {
-	return "news"
 }
 
 func GetIdsFromNewss(newss []News) []int64 {

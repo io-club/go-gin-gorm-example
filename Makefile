@@ -16,9 +16,12 @@ upload:
 
 remote-stop:
 	ssh ${SERVER_SSH} "pkill fibric"
-remote-deploy:
-	ssh ${SERVER_SSH} "cd app && nohup ./fibric > log/fibric.log 2>&1 &"
+remote-deploy-release:
+	ssh ${SERVER_SSH} "cd app && MODE=release DB_MODE=release nohup ./fibric > log/fibric.log 2>&1 &"
+remote-deploy-debug:
+	ssh ${SERVER_SSH} "cd app && MODE=debug DB_MODE=release nohup ./fibric > log/fibric.log 2>&1 &"
 remote-clean:
 	ssh ${SERVER_SSH} "cd app && rm -f fibric"
 build_and_upload : build upload remote-deploy
-static-build_and_upload : build-static remote-stop remote-clean upload remote-deploy
+static-build_upload_release : build-static remote-clean upload remote-stop remote-deploy-release
+static-build_upload_debug : build-static remote-clean upload remote-stop remote-deploy-debug

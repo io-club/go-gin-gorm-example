@@ -15,7 +15,7 @@ var DB *gorm.DB
 func init() {
 	var db *gorm.DB
 	var err error
-	switch config.MODE {
+	switch config.DB_MODE {
 	case "debug":
 		// connect to sqlite
 		db, err = gorm.Open(sqlite.Open("./cache/test.db"), &gorm.Config{})
@@ -30,9 +30,9 @@ func init() {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	DB = db
 
 	// Create tables
+	DB = db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4")
 	DB.AutoMigrate(&Fabric{})
 	DB.AutoMigrate(&User{})
 	DB.AutoMigrate(&Image{})
@@ -41,6 +41,7 @@ func init() {
 	DB.AutoMigrate(&Cloth{})
 	DB.AutoMigrate(&Dress{})
 	DB.AutoMigrate(&News{})
+	DB = db
 }
 
 var tableNames *[]string = nil
