@@ -181,7 +181,7 @@ func GetTrends(c *gin.Context) {
 	}
 
 	// 获取图片信息
-	imagesMap, err := model.GetImagesByRecordIds(model.Cloth{}.TableName(), model.GetIdsFromTrends(trends))
+	imagesMap, err := model.GetImagesByRecordIds(model.Trend{}.TableName(), model.GetIdsFromTrends(trends))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "图片信息获取失败"})
 		return

@@ -66,7 +66,7 @@ func UploadImage(c *gin.Context) {
 		return
 	}
 	if int(count)+len(req.Images) > 5 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "最多上传 5 张图片"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "最多上传 5 张图片", "your": count, "has": len(req.Images)})
 		return
 	}
 

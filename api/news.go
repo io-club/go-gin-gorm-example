@@ -18,7 +18,7 @@ func DeleteNewsById(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "parseint fail"})
 		return
 	}
-	err = model.DeleteClothById(newsId)
+	err = model.DeleteNewsById(newsId)
 	if err != nil {
 		c.JSON(404, gin.H{"error": "delete fail"})
 		return
