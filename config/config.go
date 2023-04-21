@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -16,6 +17,10 @@ var (
 	DBPassword string
 	DBName     string
 	DBCharset  string
+)
+
+var (
+    MaxImageNum int64
 )
 
 var SessionSecret = []byte("my-secret")
@@ -35,4 +40,12 @@ func init() {
 	DBName = os.Getenv("DB_NAME")
 	DBCharset = os.Getenv("DB_CHARSET")
 	SessionSecret = []byte(os.Getenv("SESSION_SECRET"))
+    MaxImageNumStr := os.Getenv("MAX_IMAGE_NUM")
+    MaxImageNumInt, err := strconv.ParseInt(MaxImageNumStr, 10, 64)
+    if err != nil {
+        MaxImageNum = 20
+    } else {
+        MaxImageNum = MaxImageNumInt
+    }
+
 }

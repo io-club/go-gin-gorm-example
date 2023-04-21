@@ -59,6 +59,7 @@ type GetNewsResponse struct {
 type GetNewssRequest struct {
 	Pageable
 	Type *string `form:"type" json:"type" `
+    Name *string `form:"name" json:"name" `
 }
 type GetNewssResponse struct {
 	model.News
@@ -78,6 +79,9 @@ func GetNewss(c *gin.Context) {
 	if req.Type != nil {
 		conn = conn.Where("type = ?", *req.Type)
 	}
+    if req.Name != nil {
+        conn = conn.Where("name like ?", "%"+*req.Name+"%")
+    }
 	if err := conn.Limit(*req.Size).Offset((*req.Page - 1) * *req.Size).Order("id desc").Find(&newss).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get newss"})
 		return

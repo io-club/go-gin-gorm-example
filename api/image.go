@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fibric/config"
 	"fibric/model"
 	"fibric/util"
 	"mime/multipart"
@@ -65,8 +66,8 @@ func UploadImage(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	if int(count)+len(req.Images) > 5 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "最多上传 5 张图片", "your": count, "has": len(req.Images)})
+	if count+int64(len(req.Images)) > config.MaxImageNum {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "最多上传 20 张图片", "your": count, "has": len(req.Images)})
 		return
 	}
 
